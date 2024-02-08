@@ -13,10 +13,11 @@ from llama_index import (
 from llama_index.indices.base import BaseIndex
 from llama_index.query_engine import BaseQueryEngine
 import os
+from typing import List
 
 
 def build_sentence_window_index(
-    document: Document,
+    documents: List[Document],
     llm,
     embed_model="local:BAAI/bge-small-en-v1.5",
     save_dir="sentence_index",
@@ -33,6 +34,9 @@ def build_sentence_window_index(
         embed_model=embed_model,
         node_parser=node_parser,
     )
+
+    document = Document(text="\n\n".join([doc.text for doc in documents]))
+    
     if not os.path.exists(save_dir):
         sentence_index = VectorStoreIndex.from_documents(
             [document], service_context=sentence_context
