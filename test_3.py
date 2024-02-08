@@ -1,31 +1,22 @@
-
 from pprint import pprint
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
 
-from llama_index import SimpleDirectoryReader, Document
-from llama_index.llms import OpenAI
+from llama_index import SimpleDirectoryReader
+from llama_index.query_engine import BaseQueryEngine, RetrieverQueryEngine
 
-from scripts import utils
-from scripts.basic_rag import build_basic_rag_index, get_basic_rag_query_engine
-from scripts.sentence_window import build_sentence_window_index, get_sentence_window_query_engine
-from scripts.auto_merging import build_automerging_index, get_automerging_query_engine
 
-import os
-import openai
-
-from backend import build_index
-
-openai.api_key = utils.get_openai_api_key()
+from backend import build_index_and_query_engine
 
 documents = SimpleDirectoryReader(
     input_files=["pdfs/eBook-How-to-Build-a-Career-in-AI.pdf"]
 ).load_data()
 
-index = build_index(documents, rag_type="veronica")
-print(index)
+query_engine: BaseQueryEngine | RetrieverQueryEngine = build_index_and_query_engine(documents, rag_type="auto_merging")
 
+response = query_engine.query("what is the best way to build a career in AI?")
 
-
+response.print_response_stream()
