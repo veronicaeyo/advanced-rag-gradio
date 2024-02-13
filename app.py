@@ -9,6 +9,10 @@ h1 {
 with gr.Blocks(css=css) as demo:
     gr.Markdown("# ADVANCED RAG GPT")
 
+    # basic, sentence_window, auto_merging
+    # TruLens Eval - context relevance, answer relevance, and answer relevance
+    # make research  on how to organise the markdown on gradio a give information on basic etc, put an image of then too and also add the trulens eval of each one
+
     chatbot = gr.Chatbot(show_copy_button=True)
     text = gr.Textbox()
 
