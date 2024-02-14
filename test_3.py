@@ -7,7 +7,8 @@ warnings.filterwarnings("ignore")
 
 from llama_index import SimpleDirectoryReader
 from llama_index.query_engine import BaseQueryEngine, RetrieverQueryEngine
-
+from llama_index.chat_engine.types import ChatMode
+from llama_index.memory import ChatMemoryBuffer
 from scripts.query_engine_builder import build_index
 
 
@@ -17,13 +18,22 @@ documents = SimpleDirectoryReader(
     input_files=["pdfs/eBook-How-to-Build-a-Career-in-AI.pdf"]
 ).load_data()
 
-index = build_index(documents, rag_type="auto_merging")
+index = build_index(documents, rag_type="basic")
 
-chat_engine = index.as_chat_engine()
+memory = ChatMemoryBuffer.from_defaults(token_limit=3900)
 
-response = chat_engine.chat("what is the best way to build a career in AI?")
-print(response.response)
+chat_engine = index.as_chat_engine(
+    chat_mode=ChatMode.CONDENSE_PLUS_CONTEXT,
+    verbose=True,
+    similarity_top_k=3,
+    memory=memory,
+)
 
+for _ in range(2):
+    print("\n")
+    question = input("Ask me anything:")
+    response = chat_engine.chat(question)
+    pprint(response.response)
 
 
 # query_engine: BaseQueryEngine | RetrieverQueryEngine = build_index_and_query_engine(documents, rag_type="auto_merging")
