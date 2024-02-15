@@ -1,15 +1,9 @@
-from llama_index.node_parser import HierarchicalNodeParser, get_leaf_nodes
-from llama_index import (
-    ServiceContext,
-    VectorStoreIndex,
-    StorageContext,
-    Document,
-    load_index_from_storage,
-)
-from llama_index.retrievers import AutoMergingRetriever
-from llama_index.indices.postprocessor import SentenceTransformerRerank
-from llama_index.query_engine import RetrieverQueryEngine
-from llama_index.indices.base import BaseIndex
+from llama_index.core.node_parser import HierarchicalNodeParser, get_leaf_nodes
+from llama_index.core import ServiceContext, VectorStoreIndex, StorageContext, Document, load_index_from_storage
+from llama_index.core.retrievers import AutoMergingRetriever
+from llama_index.core.postprocessor import SentenceTransformerRerank
+from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_index.core.indices.base import BaseIndex
 from typing import List
 from scripts.load_index import index_from_storage
 

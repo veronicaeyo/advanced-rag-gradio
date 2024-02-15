@@ -5,8 +5,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-from llama_index import SimpleDirectoryReader, Document
-from llama_index.llms import OpenAI
+from llama_index.core import SimpleDirectoryReader, Document
+from llama_index.llms.openai import OpenAI
 
 from scripts import utils
 from scripts.basic_rag import build_basic_rag_index, get_basic_rag_query_engine

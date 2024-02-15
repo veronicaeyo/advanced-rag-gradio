@@ -1,13 +1,8 @@
 
-from llama_index.indices.postprocessor import (
-    MetadataReplacementPostProcessor,
-    SentenceTransformerRerank,
-)
-from llama_index import (
-    VectorStoreIndex
-)
-from llama_index.indices.base import BaseIndex
-from llama_index.query_engine import BaseQueryEngine
+from llama_index.core.postprocessor import MetadataReplacementPostProcessor, SentenceTransformerRerank
+from llama_index.core import VectorStoreIndex
+from llama_index.core.indices.base import BaseIndex
+from llama_index.core.query_engine import BaseQueryEngine
 
 def get_sentence_window_query_engine(
     index: VectorStoreIndex | BaseIndex,

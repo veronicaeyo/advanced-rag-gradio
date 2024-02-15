@@ -1,12 +1,7 @@
-from llama_index import (
-    ServiceContext,
-    Document,
-    VectorStoreIndex,
-    load_index_from_storage,
-)
-from llama_index.llms import OpenAI
-from llama_index.indices.base import BaseIndex
-from llama_index.query_engine import BaseQueryEngine
+from llama_index.core import ServiceContext, Document, VectorStoreIndex, load_index_from_storage
+from llama_index.llms.openai import OpenAI
+from llama_index.core.indices.base import BaseIndex
+from llama_index.core.query_engine import BaseQueryEngine
 
 from typing import List
 

@@ -5,10 +5,10 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-from llama_index import SimpleDirectoryReader
-from llama_index.query_engine import BaseQueryEngine, RetrieverQueryEngine
-from llama_index.chat_engine.types import ChatMode
-from llama_index.memory import ChatMemoryBuffer
+from llama_index.core import SimpleDirectoryReader
+from llama_index.core.query_engine import BaseQueryEngine, RetrieverQueryEngine
+from llama_index.core.chat_engine.types import ChatMode
+from llama_index.core.memory import ChatMemoryBuffer
 from scripts.query_engine_builder import build_index
 
 

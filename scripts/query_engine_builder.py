@@ -13,10 +13,10 @@ from scripts.auto_merging.query_engine import get_automerging_query_engine
 from scripts.basic_rag.build_index import build_basic_rag_index
 from scripts.basic_rag.query_engine import get_basic_rag_query_engine
 
-from llama_index.llms import OpenAI
-from llama_index import Document, VectorStoreIndex
-from llama_index.indices.base import BaseIndex
-from llama_index.query_engine import RetrieverQueryEngine, BaseQueryEngine
+from llama_index.llms.openai import OpenAI
+from llama_index.core import Document, VectorStoreIndex
+from llama_index.core.indices.base import BaseIndex
+from llama_index.core.query_engine import RetrieverQueryEngine, BaseQueryEngine
 
 
 import nest_asyncio
