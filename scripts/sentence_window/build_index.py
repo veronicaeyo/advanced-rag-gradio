@@ -28,7 +28,7 @@ def build_sentence_window_index(
     document = Document(text="\n\n".join([doc.text for doc in documents]))
 
     if not os.path.exists(save_dir):
-        sentence_index = VectorStoreIndex(
+        sentence_index = VectorStoreIndex.from_documents(
             [document], embed_model=embed_model, transformations=[node_parser]
         )
         sentence_index.storage_context.persist(persist_dir=save_dir)

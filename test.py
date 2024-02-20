@@ -49,7 +49,7 @@ from scripts.auto_merging.build_index import build_automerging_index
 from llama_index.core.node_parser import SentenceSplitter
 
 
-parser = SentenceSplitter(chunk_size=32, chunk_overlap=10)
+parser = SentenceSplitter()
 
 nodes= parser.get_nodes_from_documents(documents)
 
