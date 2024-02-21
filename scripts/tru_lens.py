@@ -30,7 +30,6 @@ groundedness = (
 feedbacks = [qa_relevance, qs_relevance, groundedness]
 
 
-
 def get_prebuilt_trulens_recorder(query_engine, app_id):
     tru_recorder = TruLlama(query_engine, app_id=app_id, feedbacks=feedbacks)
     return tru_recorder

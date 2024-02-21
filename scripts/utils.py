@@ -22,7 +22,6 @@ def get_hf_api_key():
     return os.getenv("HUGGINGFACE_API_KEY")
 
 
-
 def get_cohere_api_key():
     _ = load_dotenv(find_dotenv())
 

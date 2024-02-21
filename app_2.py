@@ -13,7 +13,14 @@ with gr.Blocks(css=css) as demo:
         gr.Markdown(
             "Basic RAG is a simplified version of the RAG (Retrieval-Augmented Generation) model. It uses a retrieval model to find relevant documents and then generates a response based on the retrieved information."
         ),
-        gr.Dropdown(["Context Relevance: High", "Answer Relevance: Medium", "Answer Coherence: Medium"], label="TruLens Evaluation"),
+        gr.Dropdown(
+            [
+                "Context Relevance: High",
+                "Answer Relevance: Medium",
+                "Answer Coherence: Medium",
+            ],
+            label="TruLens Evaluation",
+        ),
 
         chatbot = gr.Chatbot(show_copy_button=True)
         text = gr.Textbox()

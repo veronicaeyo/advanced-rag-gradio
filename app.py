@@ -11,8 +11,8 @@ with gr.Blocks(css=css) as demo:
 
     def create_file_upload():
         return gr.File(
-        type="filepath", label="Upload file", height=80, file_types=["text", ".pdf"]
-    )
+            type="filepath", label="Upload file", height=80, file_types=["text", ".pdf"]
+        )
 
     def create_chatbot():
         return gr.Chatbot(show_copy_button=True)
@@ -24,13 +24,18 @@ with gr.Blocks(css=css) as demo:
         gr.Markdown(
             "Basic RAG is a simplified version of the RAG (Retrieval-Augmented Generation) model. It uses a retrieval model to find relevant documents and then generates a response based on the retrieved information."
         ),
-        gr.Dropdown(["TruLens Evaluation", "Context Relevance: High" "- Answer Relevance: Medium", "- Answer Coherence: Medium"])
+        gr.Dropdown(
+            [
+                "TruLens Evaluation",
+                "Context Relevance: High" "- Answer Relevance: Medium",
+                "- Answer Coherence: Medium",
+            ]
+        )
         chatbot = create_chatbot()
         text = create_textbox()
         file = create_file_upload()
 
         file.upload(fn=lambda x: x.name, inputs=file, outputs=text)
-
 
     with gr.Tab("Sentence Window"):
 
@@ -45,7 +50,6 @@ with gr.Blocks(css=css) as demo:
         file = create_file_upload()
 
         file.upload(fn=lambda x: x.name, inputs=file, outputs=text)
-
 
     with gr.Tab("Auto-Merging"):
         gr.Markdown(
@@ -63,8 +67,6 @@ with gr.Blocks(css=css) as demo:
 
 if __name__ == "__main__":
     demo.queue().launch()
-
-
 
     # basic, sentence_window, auto_merging
     # TruLens Eval - context relevance, answer relevance, and answer relevance

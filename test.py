@@ -1,7 +1,7 @@
-
 from pprint import pprint
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
 
@@ -38,8 +38,6 @@ documents = SimpleDirectoryReader(
 # pprint(query_engine.query("What is the best way to build a career in AI?").response)
 
 
-
-
 # from llama_index.embeddings.cohere import CohereEmbedding
 from llama_index.embeddings.openai import OpenAIEmbedding
 from scripts.utils import get_cohere_api_key, get_openai_api_key
@@ -51,9 +49,9 @@ from llama_index.core.node_parser import SentenceSplitter
 
 parser = SentenceSplitter()
 
-nodes= parser.get_nodes_from_documents(documents)
+nodes = parser.get_nodes_from_documents(documents)
 
 # embedding_model = CohereEmbedding(get_cohere_api_key())
 embedding_model = OpenAIEmbedding(api_key=get_openai_api_key())
 
-index = build_sentence_window_index(nodes, embed_model= embedding_model)
+index = build_sentence_window_index(nodes, embed_model=embedding_model)

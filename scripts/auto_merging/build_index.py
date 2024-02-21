@@ -1,18 +1,24 @@
 import os
 from llama_index.core.node_parser import HierarchicalNodeParser, get_leaf_nodes
-from llama_index.core import ServiceContext, VectorStoreIndex, StorageContext, Document, load_index_from_storage
+from llama_index.core import (
+    VectorStoreIndex,
+    StorageContext,
+    Document,
+    load_index_from_storage,
+)
 from llama_index.core.indices.base import BaseIndex
 from llama_index.core.embeddings.utils import EmbedType
-from typing import List
+from typing import List, cast
 from scripts.load_index import index_from_storage
+from os import PathLike
 
 
 def build_automerging_index(
     documents: List[Document],
     embed_model: EmbedType,
-    save_dir="merging_index",
+    save_dir: PathLike[str] = cast(PathLike[str], "merging_index"),
     chunk_sizes=None,
-) -> VectorStoreIndex | BaseIndex:
+) -> BaseIndex:
     chunk_sizes = chunk_sizes or [2048, 512, 128]
     node_parser = HierarchicalNodeParser.from_defaults(chunk_sizes=chunk_sizes)
     nodes = node_parser.get_nodes_from_documents(documents)
@@ -30,6 +36,6 @@ def build_automerging_index(
         )
         automerging_index.storage_context.persist(persist_dir=save_dir)
     else:
-        automerging_index = index_from_storage(save_dir)
+        automerging_index = cast(VectorStoreIndex, index_from_storage(save_dir))
 
     return automerging_index
