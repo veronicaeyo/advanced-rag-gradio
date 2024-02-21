@@ -18,7 +18,7 @@ from typing import List, cast
 from scripts.load_index import index_from_storage
 
 
-def get_automerging_query_engine(
+def build_automerging_chat_engine(
     index: VectorStoreIndex | BaseIndex,
     similarity_top_k=12,
     rerank_top_n=2,

@@ -34,7 +34,7 @@ documents = SimpleDirectoryReader(
 # pprint(query_engine.query("What is the best way to build a career in AI?").response)
 
 # automerging_index = build_automerging_index(documents, llm)
-# query_engine = get_automerging_query_engine(automerging_index)
+# query_engine = build_automerging_chat_engine(automerging_index)
 # pprint(query_engine.query("What is the best way to build a career in AI?").response)
 
 
