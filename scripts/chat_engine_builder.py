@@ -67,19 +67,17 @@ class ChatEngineBuilder:
         }
 
         index_builders = {
-            "basic": build_basic_rag_index(**index_params),
-            "sentence_window": build_sentence_window_index(
-                **index_params, window_size=window_size
-            ),
-            "auto_merging": build_automerging_index(
-                **index_params, chunk_sizes=chunk_sizes
-            ),
-        }
+        "basic": lambda params: build_basic_rag_index(**params),
+        "sentence_window": lambda params: build_sentence_window_index(**params, window_size=window_size),
+        "auto_merging": lambda params: build_automerging_index(**params, chunk_sizes=chunk_sizes),
+    }
 
         try:
-            return index_builders[self.rag_type]
+            builder = index_builders[self.rag_type]
         except KeyError:
             raise ValueError(f"Invalid rag_type: {self.rag_type}")
+
+        return builder(index_params)
 
     def build_chat_engine(
         self,
