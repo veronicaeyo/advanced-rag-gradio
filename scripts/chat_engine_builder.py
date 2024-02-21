@@ -4,13 +4,13 @@ from typing import List, Literal, TypedDict
 
 
 from scripts.sentence_window.build_index import build_sentence_window_index
-from scripts.sentence_window.chat_engine import get_sentence_window_query_engine
+from scripts.sentence_window.chat_engine import build_sentence_window_chat_engine
 
 from scripts.auto_merging.build_index import build_automerging_index
 from scripts.auto_merging.chat_engine import build_automerging_chat_engine
 
 from scripts.basic_rag.build_index import build_basic_rag_index
-from scripts.basic_rag.chat_engine import get_basic_rag_query_engine
+from scripts.basic_rag.chat_engine import build_basic_rag_chat_engine
 
 
 from llama_index.core import Document
@@ -89,8 +89,8 @@ class ChatEngineBuilder:
             "similarity_top_k": similarity_top_k,
         }
         query_engines = {
-            "basic": get_basic_rag_query_engine(**query_params),
-            "sentence_window": get_sentence_window_query_engine(
+            "basic": build_basic_rag_chat_engine(**query_params),
+            "sentence_window": build_sentence_window_chat_engine(
                 **query_params, rerank_top_n=rerank_top_n
             ),
             "auto_merging": build_automerging_chat_engine(

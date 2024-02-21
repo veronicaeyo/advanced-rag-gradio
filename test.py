@@ -24,13 +24,13 @@ documents = SimpleDirectoryReader(
 # # Buuild basic rag
 
 # basic_index = build_basic_rag(document, llm)
-# query_engine = get_basic_rag_query_engine(basic_index)
+# query_engine = build_basic_rag_chat_engine(basic_index)
 # response = query_engine.query("What is the best way to build a career in AI?")
 # response.print_response_stream()
 
 
 # sentence_index = build_sentence_window_index(document, llm)
-# query_engine = get_sentence_window_query_engine(sentence_index)
+# query_engine = build_sentence_window_chat_engine(sentence_index)
 # pprint(query_engine.query("What is the best way to build a career in AI?").response)
 
 # automerging_index = build_automerging_index(documents, llm)

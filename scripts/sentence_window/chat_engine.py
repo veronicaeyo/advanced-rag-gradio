@@ -7,7 +7,7 @@ from llama_index.core.indices.base import BaseIndex
 from llama_index.core.query_engine import BaseQueryEngine
 
 
-def get_sentence_window_query_engine(
+def build_sentence_window_chat_engine(
     index: VectorStoreIndex | BaseIndex,
     similarity_top_k=6,
     rerank_top_n=2,
