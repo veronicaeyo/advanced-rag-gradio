@@ -12,7 +12,7 @@ from scripts.auto_merging.chat_engine import build_automerging_chat_engine
 from scripts.basic_rag.build_index import build_basic_rag_index
 from scripts.basic_rag.chat_engine import build_basic_rag_chat_engine
 
-
+from llama_index.core.llms.utils import LLMType
 from llama_index.core import Document
 from llama_index.core.indices.base import BaseIndex
 from llama_index.core.query_engine import RetrieverQueryEngine, BaseQueryEngine
@@ -36,12 +36,14 @@ class IndexParams(TypedDict):
 class QueryParams(TypedDict):
     index: BaseIndex
     similarity_top_k: int
+    llm: LLMType
 
 
 class ChatEngineBuilder:
     def __init__(
         self,
         documents: List[Document],
+        llm: LLMType,
         save_dir: PathLike[str],
         embed_model: EmbedType,
         rag_type: Literal["basic", "sentence_window", "auto_merging"] = "basic",
@@ -50,6 +52,7 @@ class ChatEngineBuilder:
         self.documents = documents
         self.save_dir = save_dir
         self.embed_model = embed_model
+        self.llm = llm
 
     def build_index(
         self,
@@ -87,6 +90,7 @@ class ChatEngineBuilder:
         query_params: QueryParams = {
             "index": self.build_index(),
             "similarity_top_k": similarity_top_k,
+            "llm": self.llm
         }
         query_engines = {
             "basic": build_basic_rag_chat_engine(**query_params),
