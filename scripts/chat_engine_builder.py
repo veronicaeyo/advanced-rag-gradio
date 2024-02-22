@@ -2,6 +2,8 @@ import warnings
 from os import PathLike
 from typing import List, Literal, TypedDict
 
+from scripts.utils import IndexParams, QueryParams
+
 
 from scripts.sentence_window.build_index import build_sentence_window_index
 from scripts.sentence_window.chat_engine import build_sentence_window_chat_engine
@@ -15,8 +17,9 @@ from scripts.basic_rag.chat_engine import build_basic_rag_chat_engine
 from llama_index.core.llms.utils import LLMType
 from llama_index.core import Document
 from llama_index.core.indices.base import BaseIndex
-from llama_index.core.query_engine import RetrieverQueryEngine, BaseQueryEngine
+
 from llama_index.core.embeddings.utils import EmbedType
+from llama_index.core.chat_engine.types import BaseChatEngine
 
 
 import nest_asyncio
@@ -25,18 +28,6 @@ import nest_asyncio
 nest_asyncio.apply()
 
 warnings.filterwarnings("ignore")
-
-
-class IndexParams(TypedDict):
-    documents: List[Document]
-    embed_model: EmbedType
-    save_dir: PathLike[str]
-
-
-class QueryParams(TypedDict):
-    index: BaseIndex
-    similarity_top_k: int
-    llm: LLMType
 
 
 class ChatEngineBuilder:
@@ -67,40 +58,42 @@ class ChatEngineBuilder:
         }
 
         index_builders = {
-        "basic": lambda params: build_basic_rag_index(**params),
-        "sentence_window": lambda params: build_sentence_window_index(**params, window_size=window_size),
-        "auto_merging": lambda params: build_automerging_index(**params, chunk_sizes=chunk_sizes),
-    }
+            "basic": lambda: build_basic_rag_index(**index_params),
+            "sentence_window": lambda: build_sentence_window_index(
+                **index_params, window_size=window_size
+            ),
+            "auto_merging": lambda: build_automerging_index(
+                **index_params, chunk_sizes=chunk_sizes
+            ),
+        }
 
         try:
-            builder = index_builders[self.rag_type]
+            return index_builders[self.rag_type]()
         except KeyError:
             raise ValueError(f"Invalid rag_type: {self.rag_type}")
-
-        return builder(index_params)
 
     def build_chat_engine(
         self,
         similarity_top_k: int = 6,
         rerank_top_n: int = 2,
-    ) -> BaseQueryEngine | RetrieverQueryEngine:
+    ) -> BaseChatEngine:
 
         query_params: QueryParams = {
             "index": self.build_index(),
             "similarity_top_k": similarity_top_k,
-            "llm": self.llm
+            "llm": self.llm,
         }
         query_engines = {
-            "basic": build_basic_rag_chat_engine(**query_params),
-            "sentence_window": build_sentence_window_chat_engine(
+            "basic": lambda: build_basic_rag_chat_engine(**query_params),
+            "sentence_window": lambda: build_sentence_window_chat_engine(
                 **query_params, rerank_top_n=rerank_top_n
             ),
-            "auto_merging": build_automerging_chat_engine(
+            "auto_merging": lambda: build_automerging_chat_engine(
                 **query_params, rerank_top_n=rerank_top_n
             ),
         }
 
         try:
-            return query_engines[self.rag_type]
+            return query_engines[self.rag_type]()
         except KeyError:
             raise ValueError(f"Invalid rag_type: {self.rag_type}")

@@ -4,15 +4,13 @@ from llama_index.core.postprocessor import (
 )
 from llama_index.core import VectorStoreIndex
 from llama_index.core.indices.base import BaseIndex
-from llama_index.core.query_engine import BaseQueryEngine
 
 from scripts.utils import memory
 from llama_index.core.chat_engine.types import ChatMode, BaseChatEngine
 from llama_index.core.llms.utils import LLMType
 
-
 def build_sentence_window_chat_engine(
-    llm: LLMType, 
+    llm: LLMType,
     index: VectorStoreIndex | BaseIndex,
     similarity_top_k=6,
     rerank_top_n=2,
@@ -30,6 +28,5 @@ def build_sentence_window_chat_engine(
         similarity_top_k=similarity_top_k,
         memory=memory,
         node_postprocessors=[postproc, rerank],
-        streaming=True,
     )
     return sentence_window_engine
