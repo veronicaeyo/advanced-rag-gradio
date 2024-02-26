@@ -16,7 +16,7 @@ from os import PathLike
 def build_automerging_index(
     documents: List[Document],
     embed_model: EmbedType,
-    save_dir: PathLike[str] = cast(PathLike[str], "merging_index"),
+    save_dir: PathLike[str],
     chunk_sizes=None,
 ) -> BaseIndex:
     chunk_sizes = chunk_sizes or [2048, 512, 128]

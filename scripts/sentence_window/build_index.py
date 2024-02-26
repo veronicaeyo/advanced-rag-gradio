@@ -12,7 +12,7 @@ from os import PathLike
 def build_sentence_window_index(
     documents: List[Document],
     embed_model: EmbedType,
-    save_dir: PathLike[str] = cast(PathLike[str], "sentence_index"),
+    save_dir: PathLike[str],
     window_size=3,
 ) -> BaseIndex:
     # create the sentence window node parser w/ default settings
