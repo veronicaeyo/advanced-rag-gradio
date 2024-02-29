@@ -43,47 +43,76 @@ class ChatbotInterface(ChatEngineBuilder):
         super().__init__(embed_model=embed_model, llm=llm)
 
     def generate_response(
-        self,
-        file: _TemporaryFileWrapper,
-        chat_history: List[Tuple[str, str]],
-        rag_type: RAGType = "basic",
-        window_size: int = 3,
-        rerank_top_n: int = 2,
-    ):
-        file_path: PathLike[str] = cast(PathLike[str], file.name)
-        save_dir: PathLike[str] = cast(
-            PathLike[str], f"saved_index/{hash_file(file)}/{rag_type}"
-        )
+            self,
+            file: _TemporaryFileWrapper,
+            chat_history: List[Tuple[str, str]],
+            rag_type: RAGType = "basic",
+            window_size: int = 3,
+            rerank_top_n: int = 2,
+        ):
+            """
+            Generates a response based on the given file, chat history, and RAG parameters.
 
-        documents = SimpleDirectoryReader(input_files=[file_path]).load_data()
+            Args:
+                file (_TemporaryFileWrapper): The file to generate the response from.
+                chat_history (List[Tuple[str, str]]): The chat history as a list of tuples, where each tuple contains the user input and the corresponding response.
+                rag_type (RAGType, optional): The type of RAG model to use. Defaults to "basic".
+                window_size (int, optional): The window size for sentence splitting. Defaults to 3.
+                rerank_top_n (int, optional): The number of top-k documents to rerank. Defaults to 2.
 
-        parser = SentenceSplitter(chunk_size=512, chunk_overlap=100)
+            Yields:
+                Tuple[List[Tuple[str, str]], str]: A tuple containing the updated chat history and the generated response as a string.
+            """
+            file_path: PathLike[str] = cast(PathLike[str], file.name)
+            save_dir: PathLike[str] = cast(
+                PathLike[str], f"saved_index/{hash_file(file)}/{rag_type}"
+            )
 
-        nodes = parser.get_nodes_from_documents(documents)
+            documents = SimpleDirectoryReader(input_files=[file_path]).load_data()
 
-        chat_engine = self.build_chat_engine(
-            cast(List[Document], nodes),
-            save_dir,
-            rag_type,
-            window_size,
-            rerank_top_n=rerank_top_n,
-        )
+            parser = SentenceSplitter(chunk_size=512, chunk_overlap=100)
 
-        self.chat_engine = chat_engine
+            nodes = parser.get_nodes_from_documents(documents)
 
-        with Capturing() as output:
-            response = self.chat_engine.stream_chat(chat_history[-1][0])
+            chat_engine = self.build_chat_engine(
+                cast(List[Document], nodes),
+                save_dir,
+                rag_type,
+                window_size,
+                rerank_top_n=rerank_top_n,
+            )
 
-        output_text = "\n".join(output)
-        for token in response.response_gen:
-            chat_history[-1][1] += token  # type: ignore
-            yield chat_history, str(output_text)
+            self.chat_engine = chat_engine
+
+            with Capturing() as output:
+                response = self.chat_engine.stream_chat(chat_history[-1][0])
+
+            output_text = "\n".join(output)
+            for token in response.response_gen:
+                chat_history[-1][1] += token  # type: ignore
+                yield chat_history, str(output_text)
 
     def reset_chat(self) -> Tuple[List, str, str]:
-        self.chat_engine.reset()
-        return [], "", ""
+            """
+            Resets the chat engine and returns an empty chat history, user message, and system message.
+
+            Returns:
+                Tuple[List, str, str]: A tuple containing an empty list (chat history), an empty string (user message),
+                and an empty string (system message).
+            """
+            self.chat_engine.reset()
+            return [], "", ""
 
     def _token_count(self) -> None:
+        """
+        Prints the counts of different types of tokens used in the model.
+
+        This method prints the counts of the following token types:
+        - Embedding Tokens
+        - LLM Prompt Tokens
+        - LLM Completion Tokens
+        - Total LLM Token Count
+        """
         print(
             "Embedding Tokens: ",
             token_counter.total_embedding_token_count,
