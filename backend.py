@@ -22,7 +22,7 @@ openai.api_key = get_openai_api_key()
 
 token_counter = TokenCountingHandler(
     tokenizer=tiktoken.encoding_for_model("gpt-3.5-turbo").encode,
-    verbose=True,  
+    verbose=True,
 )
 
 Settings.callback_manager = CallbackManager([token_counter])
@@ -42,54 +42,58 @@ class ChatbotInterface(ChatEngineBuilder):
     def __init__(self):
         super().__init__(embed_model=embed_model, llm=llm)
 
+    def generate_response(
+        self,
+        file: _TemporaryFileWrapper,
+        chat_history: List[Tuple[str, str]],
+        rag_type: RAGType = "basic",
+        window_size: int = 3,
+        rerank_top_n: int = 2,
+    ):
+        file_path: PathLike[str] = cast(PathLike[str], file.name)
+        save_dir: PathLike[str] = cast(
+            PathLike[str], f"saved_index/{hash_file(file)}/{rag_type}"
+        )
 
-def generate_response(
-    self,
-    file: _TemporaryFileWrapper,
-    chat_history: List[Tuple[str, str]],
-    rag_type: RAGType = "basic",
-):
-    file_path: PathLike[str] = cast(PathLike[str], file.name)
-    save_dir: PathLike[str] = cast(
-        PathLike[str], f"saved_index/{hash_file(file)}/{rag_type}"
-    )
+        documents = SimpleDirectoryReader(input_files=[file_path]).load_data()
 
-    documents = SimpleDirectoryReader(input_files=[file_path]).load_data()
+        parser = SentenceSplitter(chunk_size=512, chunk_overlap=100)
 
-    parser = SentenceSplitter(chunk_size=512, chunk_overlap=100)
+        nodes = parser.get_nodes_from_documents(documents)
 
-    nodes = parser.get_nodes_from_documents(documents)
+        chat_engine = self.build_chat_engine(
+            cast(List[Document], nodes),
+            save_dir,
+            rag_type,
+            window_size,
+            rerank_top_n=rerank_top_n,
+        )
 
-    chat_engine = self.build_chat_engine(
-        cast(List[Document], nodes), save_dir, rag_type
-    )
+        self.chat_engine = chat_engine
 
-    self.chat_engine = chat_engine
+        with Capturing() as output:
+            response = self.chat_engine.stream_chat(chat_history[-1][0])
 
-    with Capturing() as output:
-        response = self.chat_engine.stream_chat(chat_history[-1][0])
+        output_text = "\n".join(output)
+        for token in response.response_gen:
+            chat_history[-1][1] += token  # type: ignore
+            yield chat_history, str(output_text)
 
-    output_text = "\n".join(output)
-    for token in response.response_gen:
-        chat_history[-1][1] += token  # type: ignore
-        return chat_history, str(output_text)
+    def reset_chat(self) -> Tuple[List, str, str]:
+        self.chat_engine.reset()
+        return [], "", ""
 
-
-def reset_chat(self) -> Tuple[List, str, str]:
-    self.chat_engine.reset()
-    return [], "", ""
-
-def _token_count(self)-> None:
-    print(
-    "Embedding Tokens: ",
-    token_counter.total_embedding_token_count,
-    "\n",
-    "LLM Prompt Tokens: ",
-    token_counter.prompt_llm_token_count,
-    "\n",
-    "LLM Completion Tokens: ",
-    token_counter.completion_llm_token_count,
-    "\n",
-    "Total LLM Token Count: ",
-    token_counter.total_llm_token_count,
-)
+    def _token_count(self) -> None:
+        print(
+            "Embedding Tokens: ",
+            token_counter.total_embedding_token_count,
+            "\n",
+            "LLM Prompt Tokens: ",
+            token_counter.prompt_llm_token_count,
+            "\n",
+            "LLM Completion Tokens: ",
+            token_counter.completion_llm_token_count,
+            "\n",
+            "Total LLM Token Count: ",
+            token_counter.total_llm_token_count,
+        )

@@ -20,12 +20,6 @@ from llama_index.core.indices.base import BaseIndex
 from llama_index.core.embeddings.utils import EmbedType
 from llama_index.core.chat_engine.types import BaseChatEngine
 
-
-import nest_asyncio
-
-
-nest_asyncio.apply()
-
 warnings.filterwarnings("ignore")
 
 
@@ -47,22 +41,22 @@ class ChatEngineBuilder:
         window_size: int = 3,
         chunk_sizes: Optional[List[int]] = None,
     ) -> BaseIndex:
-        """_summary_
+        """
+        Builds and returns a RAG index based on the specified parameters.
 
         Args:
-            documents (List[Document]): _description_
-            save_dir (PathLike[str]): _description_
-            rag_type (RAGType, optional): _description_. Defaults to "basic".
-            window_size (int, optional): _description_. Defaults to 3.
-            chunk_sizes (Optional[List[int]], optional): _description_. Defaults to None.
-
-        Raises:
-            ValueError: _description_
+            documents (List[Document]): List of documents to be indexed.
+            save_dir (PathLike[str]): Directory path to save the index.
+            rag_type (RAGType, optional): Type of RAG index to build. Defaults to "basic".
+            window_size (int, optional): Window size for sentence window index. Defaults to 3.
+            chunk_sizes (Optional[List[int]], optional): Chunk sizes for auto-merging index. Defaults to None.
 
         Returns:
-            BaseIndex: _description_
-        """
+            BaseIndex: The built RAG index.
 
+        Raises:
+            ValueError: If an invalid rag_type is provided.
+        """
         index_params: IndexParams = {
             "documents": documents,
             "embed_model": self.embed_model,
@@ -93,7 +87,23 @@ class ChatEngineBuilder:
         similarity_top_k: int = 6,
         rerank_top_n: int = 2,
     ) -> BaseChatEngine:
+        """
+        Builds a chat engine based on the specified parameters.
 
+        Args:
+            documents (List[Document]): List of documents to build the index.
+            save_dir (PathLike[str]): Directory to save the index.
+            rag_type (RAGType, optional): Type of RAG model to use. Defaults to "basic".
+            window_size (int, optional): Window size for sentence window RAG. Defaults to 3.
+            similarity_top_k (int, optional): Number of similar documents to retrieve. Defaults to 6.
+            rerank_top_n (int, optional): Number of responses to rerank. Defaults to 2.
+
+        Returns:
+            BaseChatEngine: The built chat engine.
+
+        Raises:
+            ValueError: If an invalid rag_type is provided.
+        """
         query_params: QueryParams = {
             "index": self.build_index(documents, save_dir, rag_type, window_size),
             "similarity_top_k": similarity_top_k,
