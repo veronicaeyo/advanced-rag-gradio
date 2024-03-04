@@ -25,9 +25,9 @@ h1 {
 with gr.Blocks(css=css) as demo:
     gr.Markdown(
         "# ADVANCED RAG GPT \n"
-        "This Gradio app is powered by LlamaIndex's `ReActAgent` with\n"
-        "OpenAI's GPT-4-Turbo as the LLM. The tools are listed below.\n"
-        "## Tools\n"
+        "### Basic RAG: The document is loaded and the text is splitted into smaller chunks and embedded. The embeddings is stored in a vector store index. When a query is issued, a similarity search is done and the relevant chunk is fetched from the vector storage and sent to the LLM.  \n"
+        "### Sentence Window Retrieval: Sentence is split into chunks and embedded, then stored in a vector store index with the context of the sentence that occured before and after it. At retrieval, the relevant sentence chunk is retrieved from the vectore storage, along with the full surrounding context and fed to the LLM. \n"
+        "### Auto-merging Retrieval: Sentence is split into parent chunks and children chunks, whenever the child chunk is retrieved, the parent chunk is also  retrieved to provide more context for the LLM. \n"
     )
     with gr.Row():
         chatbot = gr.Chatbot(
